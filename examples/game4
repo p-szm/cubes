@@ -1,0 +1,6 @@
+NOMOVES=WIN
+
+3
+MOVE -3 -1 0 LIM -1
+MOVE 0 -3 -1 LIM -1
+MOVE -1 0 -3 LIM -1

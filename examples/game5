@@ -1,0 +1,6 @@
+NOMOVES=LOSE
+
+3
+MOVE -1 -2 -3 LIM -1
+MOVE -3 -1 -2 LIM -1
+MOVE -2 -3 -1 LIM -1
