@@ -102,7 +102,7 @@ void Board::solve()
 
                 // See if all reachable squares are loosing
                 bool all_lose = true;
-                for (int n = 0; n < vals.size() && !all_lose; n++)
+                for (int n = 0; n < vals.size() && all_lose; n++)
                 {
                     Field f = vals[n];
                     if (f != WILLLOSE && f != LOSE)
@@ -114,8 +114,8 @@ void Board::solve()
                     data[i][j][k] = WILLWIN;
                 else
                 {
-                    std::cout << "Cube " << i << ' ' << j << ' ' << k
-                    << ' ' << " could not be completed" << std::endl;
+                    std::cout << "Cube (" << i << ' ' << j << ' ' << k
+                    << ") could not be completed" << std::endl;
                     stop = true;
                 }
             }
