@@ -15,6 +15,7 @@
 #include <vector>
 #include "arrows.h"
 #include <cmath>
+#include <fstream>
 
 // Constants
 int width = 800;
@@ -180,38 +181,70 @@ void print_instructions()
     "  ENTER - Solve the board" << std::endl;
 }
 
-void process_input()
+int process_file(std::string filename)
 {
-    std::cout << "Input:" << std::endl;
-    
-    std::string type;
-    std::cin >> type;
-    if (type == "NOMOVES=LOSE")
+    std::ifstream file(filename.c_str());
+    if (!file.is_open())
     {
-        b.set_nomoves_win(false);
-        std::cout << "  NOMOVES=LOSE" << std::endl;
-    }
-    else
-    {
-        b.set_nomoves_win(true);
-        std::cout << "  NOMOVES=WIN" << std::endl;
+        std::cerr << "Could not open " << filename << std::endl;
+        return 1;
     }
     
-    int no_moves;
-    std::cin >> no_moves;
-    for (int i = 0; i < no_moves; i++)
+    std::string line;
+    while (getline(file, line))
     {
-        int x, y, z, lim;
-        char move_str[32], lim_str[32];
-        scanf("%s %d %d %d %s %d", move_str, &x, &y, &z, lim_str, &lim);
-        b.add_move(x, y, z, lim);
-        printf("  MOVE %d %d %d LIM %d\n", x, y, z, lim);
+        if (line.substr(0, 7) == "NOMOVES")
+        {
+            char str[32];
+            int n = sscanf(line.c_str(), "NOMOVES = %s", str);
+            if (n == 1)
+            {
+                if (std::string(str) == "LOSE")
+                    b.set_nomoves_win(false);
+                else if (std::string(str) == "WIN")
+                    b.set_nomoves_win(true);
+                else
+                {
+                    std::cerr << "Error: " << line << std::endl;
+                    return 1;
+                }
+            }
+            else
+            {
+                std::cerr << "Error: " << line << std::endl;
+                return 1;
+            }
+        }
+        
+        else if (line.substr(0, 4) == "MOVE")
+        {
+            int x, y, z, lim;
+            int n = sscanf(line.c_str(), "MOVE %d %d %d LIM %d", &x, &y, &z, &lim);
+            if (n == 4)
+                b.add_move(x, y, z, lim);
+            else
+            {
+                std::cerr << "Error: " << line << std::endl;
+                return 1;
+            }
+        }
     }
-    std::cout << std::endl;
+    return 0;
 }
 
 int main (int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        std::cout << "Usage: ./cubes file" << std::endl;
+        std::exit(1);
+    }
+    int res = process_file(argv[1]);
+    if (res != 0)
+    {
+        std::exit(1);
+    }
+    
     // Initiallize GLUT
     glutInit(&argc, argv);
     
@@ -253,7 +286,6 @@ int main (int argc, char** argv)
     gluPerspective(60, width/(float)height, 0.1, 100);
     
     print_instructions();
-    process_input();
     b.solve();
     
     // Enter the main loop

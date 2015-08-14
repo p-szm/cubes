@@ -11,7 +11,14 @@ set(SRC_FILES
 	src/move.cpp
 	src/vec.cpp)
 
-add_executable(cubes ${SRC_FILES})
+set(HEADER_FILES
+	src/arrows.h
+	src/board.h
+	src/mathematics.h
+	src/move.h
+	src/vec.h)
+
+add_executable(cubes ${SRC_FILES} ${HEADER_FILES})
 
 # Add libraries
 find_package(OpenGL REQUIRED)
